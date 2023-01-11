@@ -11,6 +11,7 @@ import (
 	"lecture/go-contracts/logger"
 	rt "lecture/go-contracts/router"
 	"lecture/go-contracts/services"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -43,6 +44,7 @@ func main() {
 	} else {
 		cf.Address.PrivateKey = hex.EncodeToString(key.PrivateKey.D.Bytes())
 	}
+	log.Println("Server Start..")
 
 	/* 로그 초기화 */
 	if err := logger.InitLogger(cf); err != nil {
