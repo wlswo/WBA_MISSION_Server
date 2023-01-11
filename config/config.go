@@ -18,6 +18,9 @@ type Config struct {
 		Mage    int
 		Mbackup int
 	}
+	KeyStore struct {
+		Fpath string
+	}
 	Contract struct {
 		ContractAddress string
 	}
