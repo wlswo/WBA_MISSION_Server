@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/hex"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	conf "lecture/go-contracts/config"
 	ctl "lecture/go-contracts/controllers"
 	"lecture/go-contracts/logger"
@@ -15,7 +17,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/term"
 )
 
 var (
@@ -27,6 +31,18 @@ func main() {
 	var configFlag = flag.String("config", "./config/config.toml", "toml file to use for configuration")
 	flag.Parse()
 	cf := conf.NewConfig(*configFlag)
+
+	/* 개인키 검증 Password 입력 */
+	keyStore, _ := ioutil.ReadFile(cf.KeyStore.Fpath)
+	fmt.Print("password : ")
+
+	if password, err := term.ReadPassword(0); err != nil {
+		panic(err)
+	} else if key, err := keystore.DecryptKey(keyStore, string(password)); err != nil {
+		panic(err)
+	} else {
+		cf.Address.PrivateKey = hex.EncodeToString(key.PrivateKey.D.Bytes())
+	}
 
 	/* 로그 초기화 */
 	if err := logger.InitLogger(cf); err != nil {
